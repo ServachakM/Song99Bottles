@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Song99BottlesServachakMariaTests extends BaseUtils {
+public class Song99BottlesServachakMariaTest extends BaseUtils {
 
     private static final String BASE_URL = "http://www.99-bottles-of-beer.net/";
 
@@ -154,8 +154,8 @@ public class Song99BottlesServachakMariaTests extends BaseUtils {
                 .append(expectedResultComments);
 
         getDriver().get(BASE_URL);
-        getDriver().findElement(By.linkText("Browse Languages")).click();
-        getDriver().findElement(By.linkText("M")).click();
+        getDriver().findElement(By.xpath("//ul[@id='menu']/li/a[@href='/abc.html']")).click();
+        getDriver().findElement(By.xpath("//ul[@id='submenu']/li/a[@href='m.html']")).click();
 
         List<WebElement> trs = getDriver().findElements(
                 By.xpath("//table[@id='category']//tr"));
@@ -167,11 +167,8 @@ public class Song99BottlesServachakMariaTests extends BaseUtils {
             }
         }
 
-        Assert.assertEquals(actualResult.size(), 1);
-        Assert.assertTrue(!actualResult.get(0).isEmpty());
+        Assert.assertTrue(actualResult.size() > 0);
         Assert.assertEquals(actualResult.get(0), expectedResult.toString());
-
-
     }
 
     @Test
