@@ -1,7 +1,11 @@
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Song99BottlesServachakMariaTests extends BaseUtils {
@@ -133,6 +137,44 @@ public class Song99BottlesServachakMariaTests extends BaseUtils {
     }
 
     @Test
+    public void testMathematicaLanguageInformation(){
+        String expectedResultLanguage = "Mathematica";
+        String expectedResultAuthor = "Brenton Bostick";
+        String expectedResultData = "03/16/06";
+        String expectedResultComments = "1";
+
+        StringBuilder expectedResult = new StringBuilder();
+        expectedResult
+                .append(expectedResultLanguage)
+                .append(" ")
+                .append(expectedResultAuthor)
+                .append(" ")
+                .append(expectedResultData)
+                .append(" ")
+                .append(expectedResultComments);
+
+        getDriver().get(BASE_URL);
+        getDriver().findElement(By.linkText("Browse Languages")).click();
+        getDriver().findElement(By.linkText("M")).click();
+
+        List<WebElement> trs = getDriver().findElements(
+                By.xpath("//table[@id='category']//tr"));
+
+        List<String> actualResult = new ArrayList<>();
+        for (WebElement tr : trs) {
+            if(tr.getText().contains(expectedResultLanguage)){
+                actualResult.add(tr.getText());
+            }
+        }
+
+        Assert.assertEquals(actualResult.size(), 1);
+        Assert.assertTrue(!actualResult.get(0).isEmpty());
+        Assert.assertEquals(actualResult.get(0), expectedResult.toString());
+
+
+    }
+
+    @Test
     public void testLanguageNameStartsWithNumber() {
         int expectedResult = 10;
 
@@ -183,7 +225,7 @@ public class Song99BottlesServachakMariaTests extends BaseUtils {
 
     @Test
     public void testBookmarkRedditInBrowseLanguageCPlusPlus7() {
-        String expectedResult = "reddit.com: Log in";
+        String expectedResult = "reddit.com: Log in".trim();
 
         getDriver().get(BASE_URL);
         getDriver().findElement(
@@ -197,9 +239,15 @@ public class Song99BottlesServachakMariaTests extends BaseUtils {
                 By.linkText("hacking style")
         ).click();
         getDriver().findElement(
-                By.xpath("//a[@title='reddit']")).click();
+                By.xpath("//div[@id='voting']/p/a[@title='reddit']")
+                ).click();
 
-        String actualResult = getDriver().getTitle();
+        WebDriverWait wait = new WebDriverWait(getDriver(), 20);
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//input[@id='loginUsername']")));
+
+        String actualResult = getDriver().getTitle().trim();
 
         Assert.assertEquals(actualResult, expectedResult);
     }
@@ -216,6 +264,25 @@ public class Song99BottlesServachakMariaTests extends BaseUtils {
                 getDriver().findElement(
                         By.xpath("//a[text()='Shakespeare']/../..")
                 ).getText().substring(0, 2));
+
+        Assert.assertTrue(actualResult < 21);
+    }
+
+    @Test
+    public void testTop20RatedShakespeare(){
+        getDriver().get(BASE_URL);
+        getDriver().findElement(By.linkText("Top Lists")).click();
+        getDriver().findElement(By.linkText("Top Rated")).click();
+
+        List<WebElement> trs = getDriver().findElements(
+                By.xpath("//table[@id='category']//tr"));
+
+        int actualResult = 150;
+        for(WebElement tr : trs){
+            if(tr.getText().contains("Shakespeare")){
+                actualResult = Integer.parseInt(tr.getText().substring(0, 2));
+            }
+        }
 
         Assert.assertTrue(actualResult < 21);
     }
